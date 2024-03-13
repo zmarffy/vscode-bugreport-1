@@ -1,0 +1,31 @@
+version: '3.9'
+
+name: msr
+
+services:
+  something:
+    command:
+      - python
+      - -Xfrozen_modules=off
+      - -m
+      - debugpy
+      - --listen
+      - 0.0.0.0:5678
+      - -m
+      - uvicorn
+      - app:app
+      - --reload
+    build:
+      context: .
+    ports:
+      - mode: ingress
+        target: 5678
+        published: "5678"
+        protocol: tcp
+    develop:
+      watch:
+        - action: sync+restart
+          path: .
+          target: /
+        - action: rebuild
+          path: requirements.txt
